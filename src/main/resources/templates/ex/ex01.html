@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>ex01</title>
+    </head>
+    <body>
+        <h4>[[${list}]]</h4>
+        <hr />
+        <h4 th:text="${list}"></h4>
+        <div th:with="num1 = ${10}, num2=${20}">
+            <h4 th:text="${num1+num2}"></h4>
+        </div>
+        <
+    </body>
+</html>
