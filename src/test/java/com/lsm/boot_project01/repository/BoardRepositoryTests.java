@@ -89,4 +89,32 @@ public class BoardRepositoryTests {
         Pageable pageable = PageRequest.of(1,10,Sort.by("bno").descending());
         repository.search1(pageable);
     }
+
+    @Test
+    public void testSearchAll(){
+        String[] types = {"t", "c", "w"};
+        String keyword = "2";
+
+        Pageable pageable = PageRequest.of(0,10, Sort.by("bno").descending());
+        Page<Board> result = repository.searchAll(types, keyword, pageable);
+        log.info("-----------" + " result : "+ result + "-----------" ); // result : null
+    }
+
+    @Test
+    public void testSearchALl2(){
+        String [] types = {"t", "c", "w"};
+        String keyword = "2";
+
+        Pageable pageable = PageRequest.of(0,10, Sort.by("bno").descending());
+
+        Page<Board> result = repository.searchAll(types, keyword, pageable);
+
+        log.info("-----------" + " getTotalPages : "+ result.getTotalPages() + "-----------" ); //total page
+        log.info("-----------" + " getSize : "+ result.getSize() + "-----------" ); //page size
+        log.info("-----------" + " getNumber : "+ result.getNumber() + "-----------" ); //page number
+        log.info("-----------" + " prev / next : "+ result.hasPrevious() + ":" +result.hasNext() + "-----------" ); // prev next
+
+        result.getContent().forEach(log::info); // content
+
+    }
 }
