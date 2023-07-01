@@ -5,7 +5,13 @@ import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
@@ -53,5 +59,34 @@ public class BoardRepositoryTests {
     public void testDelete(){
         Long tno = 1L;
         repository.deleteById(tno);
+    }
+
+    @Test
+    public void testPaging(){
+        // 1-page order by bno desc
+        Pageable pageable = PageRequest.of(0,10, Sort.by("bno").descending());
+        Page<Board> result = repository.findAll(pageable);
+        log.info("---------- " + "result : " + result + "---------- ");
+    }
+
+    @Test
+    public void testListing(){
+        Pageable pageable = PageRequest.of(0,10,Sort.by("bno").descending());
+        Page<Board> result = repository.findAll(pageable);
+        log.info("total count : " + result.getTotalElements());
+        log.info("total pages : " + result.getTotalPages());
+        log.info("total numbers : " + result.getNumber());
+        log.info("total size : " + result.getSize());
+
+        List<Board> boardList = result.getContent();
+
+        boardList.forEach(log::info);
+    }
+
+    @Test
+    public void testSearch1(){
+        //2-page order by bno desc
+        Pageable pageable = PageRequest.of(1,10,Sort.by("bno").descending());
+        repository.search1(pageable);
     }
 }
