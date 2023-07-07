@@ -42,4 +42,11 @@ public class BoardServiceTests {
         BoardDTO readOne = service.readOne((long)100);
         log.info("modify 101 : " + readOne);
     }
+
+    @Test
+    public void testRemove(){
+        log.info(service.readOne(100L));
+        service.remove(100L);
+//        log.info(service.readOne(100L));
+    }
 }
