@@ -64,7 +64,7 @@ public class BoardServiceImpl implements BoardService{
         // Board type Page -> content -> 객체변환매핑 -> list
         List<BoardDTO> dtoList = result.getContent().stream().map(board->modelMapper.map(board, BoardDTO.class)).collect(Collectors.toList());
 
-        // PageResponseDTO(PageRequestDTO requestDTO, List<E> dtoList, int total){}
+        // PageResponseDTO(PageRequestDTO requestDTO, List<E> dtoList, int total){...}
         return PageResponseDTO.<BoardDTO>withAll()
                 .requestDTO(requestDTO)
                 .dtoList(dtoList)
