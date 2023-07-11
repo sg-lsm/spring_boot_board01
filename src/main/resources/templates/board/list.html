@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/basic.html}">
+
+<div layout:fragment="content">
+    <div class="row mt-3">
+        <form action="/board/list" method="get">
+            <div class="col">
+                <input type="hidden" name="size" th:value="${pageRequestDTO.size}">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <select class="form-select" name="type">
+                            <option value="">----</option>
+                            <option value="t" th:selected="${pageRequestDTO.type == 't'}">title</option>
+                            <option value="c" th:selected="${pageRequestDTO.type == 'c'}">content</option>
+                            <option value="w" th:selected="${pageRequestDTO.type == 'w'}">writer</option>
+                            <option value="tc" th:selected="${pageRequestDTO.type == 'tc'}">title content</option>
+                            <option value="tcw" th:selected="${pageRequestDTO.type == 'tcw'}">title content writer</option>
+                        </select>
+                    </div>
+                    <input type="text" class="form-control" name="keyword" th:value="${pageRequestDTO.keyword}">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary searchBtn" type="submit">search</button>
+                        <button class="btn btn-outline-secondary clearBtn" type="button">clear</button>
+                    </div>
+                </div>
+            </div>
+        </form><!--search end-->
+    </div>
+    <div class="row mt-3">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    Board List
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">
+                        List
+                    </h5>
+
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">BNO</th>
+                                <th scope="col">Title</th>
+                                <th scope="col">Writer</th>
+                                <th scope="col">RegDate</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="dto:${responseDTO.dtoList}">
+                                <th scope="row">[[${dto.bno}]]</th>
+                                <td>[[${dto.title}]]</td>
+                                <td>[[${dto.writer}]]</td>
+                                <td>[[${#temporals.format(dto.regDate, 'yyyy-MM-dd')}]]</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="float-end">
+                        <ul class="pagination flex-wrap">
+                            <li class="page-item" th:if="${responseDTO.prev}">
+                                <a class="page-link" th:data-num="${responseDTO.start -1}">prev</a>
+                            </li>
+                            <th:block th:each="i: ${#numbers.sequence(responseDTO.start, responseDTO.end)}">
+                                <li th:class="${responseDTO.page == i} ? 'page-item active' : 'page-item'">
+                                    <a class="page-link" th:data-num="${i}">[[${i}]]</a>
+                                </li>
+                            </th:block>
+                            <li class="page-item" th:if="${responseDTO.next}">
+                                <a class="page-link" th:data-num="${responseDTO.end + 1}">next</a>
+                            </li>
+                        </ul>
+                    </div> <!--float end-->
+                </div> <!--card body end-->
+            </div> <!--card end-->
+        </div>  <!--col end-->
+    </div>  <!--row end-->
+</div>
+
+<script layout:fragment="script" th:inline="javascript">
+    document.querySelector(".pagination").addEventListener("click", function(e){
+        e.preventDefault()
+        e.stopPropagation()
+
+        const target = e.target
+
+        if(target.tagName !== 'A'){
+            return
+        }
+
+        const num = target.getAttribute("data-num")
+        const formObj = document.querySelector("form")
+
+        formObj.innerHTML += `<input type='hidden' name='page' value='${num}' />`
+        formObj.submit();
+
+        },false)
+
+        document.querySelector(".clearBtn").addEventListener("click", function(e){
+            e.preventDefault()
+            e.stopPropagation()
+
+            self.location = '/board/list'
+
+        }, false)
+</script>
