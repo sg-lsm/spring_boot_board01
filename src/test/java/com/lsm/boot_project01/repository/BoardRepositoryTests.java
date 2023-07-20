@@ -115,6 +115,5 @@ public class BoardRepositoryTests {
         log.info("-----------" + " prev / next : "+ result.hasPrevious() + ":" +result.hasNext() + "-----------" ); // prev next
 
         result.getContent().forEach(log::info); // content
-
     }
 }

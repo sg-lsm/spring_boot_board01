@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class BoardDTO {
     private Long bno;
     @NotEmpty
-    @Size(min = 3, max = 100)
+    @Size(min = 2, max = 100, message = "title length must 2~100 under text")
     private String title;
     @NotEmpty
     private String content;
