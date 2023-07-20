@@ -59,4 +59,32 @@ public class BoardController {
         log.info(boardDTO);
         model.addAttribute("dto", boardDTO);
     }
+    @PostMapping("/modify")
+    public String modify(PageRequestDTO pageRequestDTO,
+                       @Valid BoardDTO boardDTO,
+                       BindingResult bindingResult,
+                       RedirectAttributes redirectAttributes){
+
+        log.info("board modify post ----- " + boardDTO);
+
+        if(bindingResult.hasErrors()){
+            log.info("error occoured : \"/modify");
+            String link = pageRequestDTO.getLink();
+            redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());
+            redirectAttributes.addAttribute("bno", boardDTO.getBno());
+            return "redirect:/board/read";
+        }
+        service.modify(boardDTO);
+        redirectAttributes.addFlashAttribute("result", "modified");
+        redirectAttributes.addAttribute("bno", boardDTO.getBno());
+        return "redirect:/board/read";
+    }
+
+    @PostMapping("/remove")
+    public String remove(Long bno, RedirectAttributes redirectAttributes){
+        log.info("remove post ----- " + bno);
+        service.remove(bno);
+        redirectAttributes.addFlashAttribute("result", "removed");
+        return "redirect:/board/list";
+    }
 }

@@ -14,7 +14,88 @@
                 <div class="card-header">
                     Board Modify
                 </div> <!-- card header end -->
+                <div class="card-body">
+                    <form th:action="@{/board/modify}" method="post" id="modifyForm">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">BNO</span>
+                            <input type="text" class="form-control" th:value="${dto.bno}" name="bno" readonly />
+                        </div> <!-- BNO input end -->
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">TITLE</span>
+                            <input type="text" class="form-control" name="title" th:value="${dto.title}"/>
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">CONTENT</span>
+                            <textarea class="form-control col-sm-5" rows="5" name="content">[[${dto.content}]]</textarea>
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">REGDATE</span>
+                            <input type="text" class="form-control" th:value="${#temporals.format(dto.regDate, 'yyyy-MM-dd HH:mm:SS')}" readonly />
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">MODDATE</span>
+                            <input type="text" class="form-control" th:value="${#temporals.format(dto.modDate, 'yyyy-MM-dd HH:mm:SS')}" readonly />
+                        </div>
+                        <div class="my-4">
+                            <div class="float-end">
+                                <button type="button" class="btn btn-primary listBtn">List</button>
+                                <button type="button" class="btn btn-secondary modBtn">Modify</button>
+                                <button type="button" class="btn btn-danger removeBtn">Remove</button>
+                            </div>
+                        </div>
+                    </form>
+                </div> <!-- card body end -->
             </div><!-- card end -->
         </div><!-- col end -->
     </div> <!-- row mt-3 end -->
 </div> <!-- layout end -->
+
+<script layout:fragment="script" th:inline="javascript">
+    const errors = [[${errors}]]
+    console.log(errors)
+
+    let errorMsg = '';
+
+    const link = [[${pageRequestDTO.getLink()}]]
+    const formObj = document.querySelector("#modifyForm")
+
+    if(errors){
+        for(let i = 0; i<errors.length; i++){
+            errorMsg += `${errors[i].field} : ${errors.code} \n`
+        }
+        history.replaceState({}, null, null)
+        alert(errorMsg)
+    }
+
+
+        <!-- modBtn class click event   -->
+    document.querySelector(".modBtn").addEventListener("click", function(e){
+        e.preventDefault()
+        e.stopPropagation()
+
+        formObj.action = `/board/modify?${link}`
+        formObj.method = 'post'
+        formObj.submit()
+    }, false)
+
+        <!-- removeBtn class click event   -->
+    document.querySelector(".removeBtn").addEventListener("click", function(e){
+        e.preventDefault()
+        e.stopPropagation()
+
+        formObj.action = `/board/remove`
+        formObj.method = 'post'
+        formObj.submit()
+
+    },false)
+
+        <!-- listBtn class click event   -->
+    document.querySelector(".listBtn").addEventListener("click", function(){
+        e.preventDefault()
+        e.stopPropagation()
+
+        formObj.reset()
+        self.location = `/board/list?${link}`
+    },false)
+
+</script>
