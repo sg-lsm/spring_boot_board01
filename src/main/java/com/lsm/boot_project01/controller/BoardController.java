@@ -67,8 +67,9 @@ public class BoardController {
 
         log.info("board modify post ----- " + boardDTO);
 
+
         if(bindingResult.hasErrors()){
-            log.info("error occoured : \"/modify");
+            log.info("error occurred : \"/modify");
             String link = pageRequestDTO.getLink();
             redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());
             redirectAttributes.addAttribute("bno", boardDTO.getBno());
