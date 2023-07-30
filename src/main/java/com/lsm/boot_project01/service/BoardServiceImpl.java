@@ -2,6 +2,7 @@ package com.lsm.boot_project01.service;
 
 import com.lsm.boot_project01.domain.Board;
 import com.lsm.boot_project01.dto.BoardDTO;
+import com.lsm.boot_project01.dto.BoardListReplyCountDTO;
 import com.lsm.boot_project01.dto.PageRequestDTO;
 import com.lsm.boot_project01.dto.PageResponseDTO;
 import com.lsm.boot_project01.repository.BoardRepository;
@@ -9,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,6 +70,21 @@ public class BoardServiceImpl implements BoardService{
         return PageResponseDTO.<BoardDTO>withAll()
                 .requestDTO(requestDTO)
                 .dtoList(dtoList)
+                .total((int)result.getTotalElements())
+                .build();
+    }
+
+    @Override
+    public PageResponseDTO<BoardListReplyCountDTO> listWithReplyCount(PageRequestDTO pageRequestDTO) {
+        String[] types = pageRequestDTO.getTypes();
+        String keyword = pageRequestDTO.getKeyword();
+        Pageable pageable = pageRequestDTO.getPageable("bno");
+
+        Page<BoardListReplyCountDTO> result = repository.searchWithReplyCount(types, keyword, pageable);
+
+        return PageResponseDTO.<BoardListReplyCountDTO>withAll()
+                .requestDTO(pageRequestDTO)
+                .dtoList(result.toList())
                 .total((int)result.getTotalElements())
                 .build();
     }

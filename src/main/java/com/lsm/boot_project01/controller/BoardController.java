@@ -1,6 +1,7 @@
 package com.lsm.boot_project01.controller;
 
 import com.lsm.boot_project01.dto.BoardDTO;
+import com.lsm.boot_project01.dto.BoardListReplyCountDTO;
 import com.lsm.boot_project01.dto.PageRequestDTO;
 import com.lsm.boot_project01.dto.PageResponseDTO;
 import com.lsm.boot_project01.service.BoardService;
@@ -25,7 +26,8 @@ public class BoardController {
 
     @GetMapping("/list")
     public void list(PageRequestDTO requestDTO, Model model){
-        PageResponseDTO<BoardDTO> responseDTO = service.list(requestDTO);
+//        PageResponseDTO<BoardDTO> responseDTO = service.list(requestDTO);
+        PageResponseDTO<BoardListReplyCountDTO> responseDTO = service.listWithReplyCount(requestDTO);
         log.info(responseDTO);
         model.addAttribute("responseDTO", responseDTO);
     }
