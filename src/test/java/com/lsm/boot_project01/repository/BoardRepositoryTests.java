@@ -38,7 +38,7 @@ public class BoardRepositoryTests {
 
     @Test
     public void testSelect(){
-        Long bno = 100L;
+        Long bno = 101L;
 
         Optional<Board> result = repository.findById(bno);
         Board board = result.orElseThrow();
