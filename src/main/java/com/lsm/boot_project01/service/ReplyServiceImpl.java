@@ -12,14 +12,12 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Log4j2
 public class ReplyServiceImpl implements ReplyService{
-    private final ReplyRepository replyRepository;
     private final ModelMapper modelMapper;
+    private final ReplyRepository replyRepository;
     @Override
     public Long register(ReplyDTO replyDTO) {
         Reply reply = modelMapper.map(replyDTO, Reply.class);
-        Long bno = replyRepository.save(reply).getRno();
-        return bno;
+        Long rno = replyRepository.save(reply).getRno();
+        return rno;
     }
-}
-
 }
