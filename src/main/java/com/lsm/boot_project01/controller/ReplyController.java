@@ -8,7 +8,6 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -66,5 +65,16 @@ public class ReplyController {
         Map<String, Long> resultMap = new HashMap<>();
         resultMap.put("rno", rno);
         return resultMap;
+    }
+
+    @ApiOperation(value="Modify Reply", notes="PUT 방식으로 특정 댓글을 수정")
+    @PutMapping(value = "/{rno}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Long> modify(@PathVariable("rno") Long rno, @RequestBody ReplyDTO replyDTO){
+        replyDTO.setRno(rno); // 번호의 일치
+        replyService.modify(replyDTO);
+        Map<String, Long> resultMap = new HashMap<>();
+        resultMap.put("rno", rno);
+        return resultMap;
+
     }
 }
