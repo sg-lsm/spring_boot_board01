@@ -76,5 +76,11 @@
 
 <script layout:fragment="script" th:inline="javascript">
     const bno = [[${dto.bno}]]
-    get1(bno)
+
+    function printReplies(page, size, goLast){
+        getList({bno, page, size, goLast}).then(
+            data => {console.log(data)}
+        ).catch(e => {console.error(e)})
+    }
+    printReplies(1,10);
 </script>
