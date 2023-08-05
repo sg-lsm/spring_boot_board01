@@ -1,5 +1,7 @@
 package com.lsm.boot_project01.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,6 +23,9 @@ public class ReplyDTO {
     private String replyText;
     @NotEmpty
     private String commenter;
-    private LocalDateTime regDate, modDate;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime regDate;
+    @JsonIgnore
+    private LocalDateTime modDate;
 
 }
