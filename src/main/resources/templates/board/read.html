@@ -77,9 +77,66 @@
 <script layout:fragment="script" th:inline="javascript">
     const bno = [[${dto.bno}]]
 
+    const replyList = document.querySelector('.replyList') // 댓글 목록 DOM
+    const replyPaging = document.querySelector('.replyPaging') // 페이지 목록 DOM
+
+    function printList(dtoList){
+        let str = '';
+
+        if(dtoList && dtoList.length > 0){
+            for(const dto of dtoList){
+                str += `
+                <li class="list-group-item d-flex replyItem">
+                    <span class="col-2">${dto.rno}</span>
+                    <span class="col-6" data-rno="${dto.rno}">${dto.replyText}</span>
+                    <span class="col-2">${dto.commenter}</span>
+                    <span class="col-2">${dto.regDate}</span>
+                </li>
+            `
+            }
+        }
+        replyList.innerHTML = str;
+    }
+
+
+    // 페이지 목록 출
+    function printPages(data){
+        //pagination
+        let pageStr = '';
+
+        if(data.prev){
+            pageStr += `
+                <li class="page-item">
+                    <a class="page-link" data-page="${data.start-1}">PREV</a>
+                </li>
+            `
+        }
+
+        for(let i= data.start; i<=data.end; i++){
+            pageStr += `
+                <li class="page-item" ${i == data.page?"active" : ""}>
+                    <a class="page-link" data-page="${i}">${i}</a>
+                </li>
+                `
+        }
+
+        if(data.next){
+            pageStr += `
+                <li class="page-item">
+                    <a class="page-link" data-page="${data.end +1}">Next</a>
+                </li>
+            `
+        }
+        replyPaging.innerHTML = pageStr;
+    }
+
+
     function printReplies(page, size, goLast){
         getList({bno, page, size, goLast}).then(
-            data => {console.log(data)}
+            data => {
+                printList(data.dtoList); // 목록 처리
+                printPages(data);   // 페이지 처리
+            }
         ).catch(e => {console.error(e)})
     }
     printReplies(1,10);
