@@ -69,6 +69,53 @@
         </div>
     </div>
 
+    <div class="modal registerModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">register reply</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div> <!-- modal-content end -->
+                <div class="modal-body">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">reply content</span>
+                        <input type="text" class="form-control replyText" />
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">commenter</span>
+                        <input type="text" class="form-control commenter" />
+                    </div>
+                </div> <!-- modal-body end -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary registerBtn">register</button>
+                    <button type="button" class="btn btn-outline-dark closeRegisterBtn">close</button>
+                </div> <!-- modal-footer end -->
+            </div> <!-- modal-content end -->
+        </div> <!-- modal-dialog end -->
+    </div> <!-- registerModal end -->
+
+    <div class="modal modifyModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title replyHeader"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="close"></button>
+                </div> <!-- modal-header end -->
+                <div class="modal-body">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">reply text</span>
+                        <input type="text" class="form-control modifyText" />
+                    </div>
+                </div> <!-- modal-body end -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-info modifyBtn">modify</button>
+                    <button type="button" class="btn btn-danger removeBtn">remove</button>
+                    <button type="button" class="btn btn-outline-dark closeModifyBtn">close</button>
+                </div> <!-- modal-footer end -->
+            </div> <!-- modal-content end -->
+        </div>  <!-- modal-dialog end -->
+    </div>  <!-- modifyModal end -->
+
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="/js/reply.js"></script>
 
@@ -77,9 +124,31 @@
 <script layout:fragment="script" th:inline="javascript">
     const bno = [[${dto.bno}]]
 
-    const replyList = document.querySelector('.replyList') // 댓글 목록 DOM
-    const replyPaging = document.querySelector('.replyPaging') // 페이지 목록 DOM
+    <!-- reply -->
+    const replyList = document.querySelector('.replyList'); // 댓글 목록 DOM
+    const replyPaging = document.querySelector('.replyPaging'); // 페이지 목록 DOM
+    const registerModal = new bootstrap.Modal(document.querySelector(".registerModal")); // 댓글 등록 모달
 
+    <!-- registerModal -->
+    const registerBtn = document.querySelector(".registerBtn");
+    const replyText = document.querySelector(".replyText");
+    const commenter = document.querySelector(".commenter");
+    const closeRegisterBtn = document.querySelector(".closeRegisterBtn");
+
+    <!-- page number click -->
+    let page = 1;
+    let size = 10;
+
+    <!-- modify modal -->
+    const modifyModal = new bootstrap.Modal(document.querySelector(".modifyModal"));
+
+    const replyHeader = document.querySelector('.replyHeader');
+    const modifyText = document.querySelector('.modifyText');
+    const modifyBtn = document.querySelector('.modifyBtn');
+    const removeBtn = document.querySelector('.modifyBtn');
+    const closeModifyBtn = document.querySelector('.closeModifyBtn');
+
+    <!-- reply event -->
     function printList(dtoList){
         let str = '';
 
@@ -130,6 +199,81 @@
         replyPaging.innerHTML = pageStr;
     }
 
+    <!-- modal register event -->
+
+    document.querySelector(".addReplyBtn").addEventListener("click", function(e){
+        registerModal.show()
+    },false);
+
+    closeRegisterBtn.addEventListener("click", function(e){
+        registerModal.hidden()
+    },false);
+
+    registerBtn.addEventListener("click", function(e){
+        const replyObj = {
+            bno:bno,
+            replyText:replyText.value,
+            commenter:commenter.value
+        }
+
+        addReply(replyObj).then(
+            result => {
+                alert(result.rno);
+                registerModal.hide();
+                replyText.value='';
+                commenter.value='';
+                printReplies(1,10,true); // 댓글 목록 갱신
+           }
+        ).catch(e =>{
+            alert("addReply()에서 예외발생");
+        })
+    }, false);
+
+    <!-- page number click event -->
+    replyPaging.addEventListener("click", function(e){
+        e.preventDefault();
+        e.stopPropagation();
+
+        const target = e.target;
+
+        if(!target || target.tagName != 'A'){
+            return;
+        }
+
+        const pageNum = target.getAttribute("data-page");
+        page = pageNum;
+        printReplies(page, size);
+
+    },false)
+
+    <!-- modify modal event -->
+    replyList.addEventListener("click", function(e){
+        e.preventDefault();
+        e.stopPropagation();
+
+        const target = e.target;
+
+        if(!target || target.tagName != 'SPAN'){
+            return;
+        };
+
+        const rno = target.getAttribute("data-rno");
+
+        if(!rno){
+            return;
+        }
+
+        getReply(rno).then(
+            reply => {
+                console.log(reply);
+                replyHeader.innerHTML = "게시물 번호" + reply.rno;
+                modifyText.value = reply.replyText;
+                modifyModal.show();
+            }
+        ).catch(e => {
+            console.error(e);
+        });
+    },false)
 
     function printReplies(page, size, goLast){
         getList({bno, page, size, goLast}).then(
